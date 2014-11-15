@@ -5,13 +5,13 @@ class UserDataDbHelper < AnacondaDbHelper
 
   @@u_data = UserDataModel.dataset()
 
-  def self.create(uid, data, date = nil)
+  def self.create(uid, data)
     insert_params = Hash.new
     throw "Missing Params " if (uid.nil? || data.nil?)
 
     insert_params[:user_id] = uid
     insert_params[:data] = data
-    insert_params[:date_created] ||=date unless date.nil?
+    insert_params[:date_created] = Time.now.strftime("%Y-%m-%d %H:%M:%S") 
 
     normalize insert_params
 
@@ -19,7 +19,7 @@ class UserDataDbHelper < AnacondaDbHelper
     invoke(lam)
   end
 
-  def serf.get_last_user_data(uid)
+  def self.get_last_user_data(uid)
     predicate = { :user_id => uid }
     udata = UserDataModel
       .where(predicate)
