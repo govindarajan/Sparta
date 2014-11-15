@@ -9,6 +9,7 @@ get '/' do
 end
  
 get "/auth" do
+    p "HEyyyyyyyyyyyyyyyyy"
 end
 
 get '/calls' do
