@@ -7,7 +7,7 @@ class UserDataDbHelper < AnacondaDbHelper
 
   def self.create(uid, data)
     insert_params = Hash.new
-    throw "Missing Params " if (uid.nil? || data.nil?)
+    raise "Missing Params " if (uid.nil? || data.nil?)
 
     insert_params[:user_id] = uid
     insert_params[:data] = data

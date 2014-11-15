@@ -10,7 +10,7 @@ class UserController
     iparams = Hash.new
     iparams[:name] = params[:name]
     iparams[:phone_number] = params[:phone_number]
-    iparams[:token] = params[:token]
+    iparams[:token] = Digest::MD5.hexdigest(params[:phone_number] + rand(1000).to_s)
     iparams[:id] = Digest::MD5.hexdigest(params[:phone_number])
     loc = params[:location]
     UserDbHelper.create_update(iparams)
@@ -20,14 +20,21 @@ class UserController
     UserDbHelper.get(iparams[:id])
   end
 
+  def update_location(qp, uid)
+    raise RestError.new(400, "Mandatory params are missing") if qp.nil?
+    params = JSON.parse qp, { :symbolize_names => true }
+    raise RestError.new(400, "Mandatory params are missing") unless params.key?(:location)
+    data = Hash.new
+    data[:location] = params[:location]
+    UserDataDbHelper.create(uid, data)
+  end
+
   def validate_reg(query)
-    print "#### #{query.inspect}"
     throw RestError.new(400, "Mandatory params are missing") if query.nil?
     params = JSON.parse query, { :symbolize_names => true }
     [
      :name,
      :phone_number,
-     :token,
      :location
     ].each { |param|
       raise RestError.new(400, "Mandatory params are missing.") unless params.key?(param)
