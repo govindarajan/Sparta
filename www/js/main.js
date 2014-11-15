@@ -1,106 +1,21 @@
-
 var application = {
     'user_name':'sarath@exotel.in',
     'password':'itsme',
+    'acc_threshold':0.1,
+    'death_threashold':25000
+    
 };
 
-function roundNumber(num) {
-    var dec = 2;
-    var result = 100 * Math.round(num * Math.pow(10, dec)) / Math.pow(10, dec);
-    return result;
-}
+document.addEventListener("intel.xdk.device.ready", onDeviceReady, false);
 
-var metatag = null;
-var masthead = null;
-var tabletop = null;
-
-//normally, global variables are discouraged. Here we use them for two reasons,
- //1) the accelerometer readings are coming potentially 100s of times per second
- // - allocating 15 variables 100s of times per second will be an unnecessary resource drain on slower device like gen1 iTouches
- //2) webkit transforms just make an animation happen - THEY DON'T change the actual CSS position of 
- //of an element that was animated. To keep track of the position a global variable is helpful (current_left, current_top)
- //although we could accomplish this differently with a little more work.
- //
- //NOTE - we said right above that webkit animations don't reposition the an element as reported by CSS. 
- //SO, why don't we then correct CSS's position? Because the can doesn't visually have time to repaint at it's pre-animation position
- //given that we are doing an new webkit animation every 100th of a second based on
- //accelerometer readings - so no need to 
- //invoke the extra overhead of telling the DOM that the element is being repositioned constantly by resetting the CSS
- //pixelLeft and pixelTop of the sodacan.
-var label = null;
-var container = null;
-var current_left = 0;
-var current_top = 0;
-var absx = 0;
-var absy = 0;
-var dx = 0;
-var dy = 0;
-
-var x_ispos = 1;
-var y_ispos = 1;
-
-//the following funciton handles the "physics" of how the can moves
- //calculating roation of the can and the direction of movement etc.
- //can be ignored if you only care about how to grab accelerometer readings
- //and do animations.
- //        //the can wants to slide in the direction of the slope of the table.
- //        //and wants to rotate such that the can is perpendicular to that direction (has reciprocal slope)
- //        //the label of the can want to rotate in the direction opposite to gravity. 
-
-
-function do_fun_with_physics(a) {
-    x_ispos = 1;
-    y_ispos = 1;
-
-    //take the abs tilt values so we don't
-    //get stupid results while doing interim
-    //calculations
-    absx = Math.abs(a.x);
-    absy = Math.abs(a.y);
-
-
-    if (absx < 0.1) {
-        absx = 0;
-    }
-    if (absy < 0.1) {
-        absy = 0;
-    }
-
-    //skip the calculations if there is no movement;
-    if (absx == absy && absx === 0) {
-        return;
-    }
-    
-}
-
-//this is the event handler for successful accelerometer readings
-function suc(a) {
-    $('#accdata').html = JSON.stringify(a);
-}
-
-
-var fail = function() {};
-
-var watchAccel = function() {
-
-
-        var opt = {};
-        opt.frequency = 5;
-        //opt.frequency = 1000;
-        var timer = intel.xdk.accelerometer.watchAcceleration(suc, opt);
-
-    };
 
 function onDeviceReady() {
-    //use viewport
-    var landscapewidth = 1360;
-    intel.xdk.display.useViewport(portrait_width, landscapewidth);
-
-    //lock orientation
+     console.log('The device is ready ');
+    //lock orientation he is not gonna play wth it and we could improve the battery usage
     intel.xdk.device.setRotateOrientation("portrait");
     intel.xdk.device.setAutoRotate(false);
 
-    //manage power
+    //manage power again comes the power saving , green exotel :]
     intel.xdk.device.managePower(true, false);
 
     //hide splash screen
@@ -109,22 +24,77 @@ function onDeviceReady() {
     watchAccel();
 }
 
-document.addEventListener("intel.xdk.device.ready", onDeviceReady, false);
 
-function onBodyLoad() {
-    metatag = document.getElementById("meta_view");
-    label = document.getElementById("img_sodalabel");
-    container = document.getElementById("div_sodacan");
-    masthead = document.getElementById("img_masthead");
+
+function roundNumber(num) {
+    
+    var dec = 2;
+    var result = 10000 * Math.round(num * Math.pow(10, dec)) / Math.pow(10, dec);
+    return result;
 }
 
 
-//*** Prevent Default Scroll ******
-var preventDefaultScroll = function(event) {
-    // Prevent scrolling on this element
-    event.preventDefault();
-    window.scroll(0, 0);
-    return false;
-};
+function updateMinMax(_min,_max){
+    console.log('accelearation data '+_min);
+    var minimum = Math.min(parseFloat(application.minimum_acceleration.textContent),_min);
+    var maximum = Math.max(parseFloat(application.maximum_acceleration.textContent),_max);
+    application.maximum_acceleration.innerHTML = maximum;
+    application.minimum_acceleration.innerHTML = minimum;
+}
 
-window.document.addEventListener('touchmove', preventDefaultScroll, false);
+
+function do_fun_with_physics(a) {
+   
+    //take the abs tilt values so we don't
+    //get stupid results while doing interim
+    //calculations
+    console.log('doing fun with physics ' + JSON.stringify(a));
+    var absx = Math.abs(a.x);
+    var absy = Math.abs(a.y);
+
+    
+    if (absx < application.acc_threshold) {
+        absx = 0;
+    }
+    if (absy < application.acc_threshold) {
+        absy = 0;
+    }
+
+    //skip the calculations if there is no movement;
+    application.acceleraton_text.innerHTML = JSON.stringify(a);
+    if (absx == absy && absx === 0) {
+        return 'Yola';
+    } else {
+        var acc = Math.sqrt(Math.pow(roundNumber(absx),2)+Math.pow(roundNumber(absy),2));
+        if(acc > application.death_threashold ){
+intel.xdk.notification.alert('You are dead','confirm','Nope!');     
+        }
+        updateMinMax(acc,acc);
+        
+    }
+    
+}
+
+//this is the event handler for successful accelerometer readings
+function suc(a) {
+    do_fun_with_physics(a);
+}
+
+
+
+var watchAccel = function() {
+    var opt = {
+    'frequency':5,
+    };
+    var timer = intel.xdk.accelerometer.watchAcceleration(suc, opt);
+    };
+
+
+//do initialize evrything from the html stuff
+function onBodyLoad() {
+    console.log('on body load is called');
+    application.metatag = document.getElementById("meta_view");
+    application.acceleraton_text = document.getElementById('accdata');
+    application.minimum_acceleration = document.getElementById('min_acc');
+    application.maximum_acceleration = document.getElementById('max_acc');
+}
