@@ -1,12 +1,37 @@
 var application = {
-    'user_name':'sarath@exotel.in',
-    'password':'itsme',
+    'token':'spartatoken',
     'acc_threshold':0.1,
-    'death_threashold':25000
-    
+    'death_threashold':25000    
 };
 
 document.addEventListener("intel.xdk.device.ready", onDeviceReady, false);
+document.addEventListener('intel.xdk.notification.confirm', receiveConfirm, false);
+
+
+//Process the event for the confirmed message
+function receiveConfirm(e)
+        {
+                if( e.id == 'acc_confirmation' )
+                {
+                        if( e.success == true && e.answer == true ) 
+                        {
+                                sendAccidentData();
+                        }
+                }
+        } 
+
+function sendCallRequest(){
+    var data = gatherData();
+} 
+            
+function gatherData(){
+   var coordinates = intel.xdk.geolocation.getCurrentPosition();
+   var token = application.token;
+   return true;
+}
+
+
+
 
 
 function onDeviceReady() {
@@ -25,7 +50,6 @@ function onDeviceReady() {
 }
 
 
-
 function roundNumber(num) {
     
     var dec = 2;
@@ -33,13 +57,14 @@ function roundNumber(num) {
     return result;
 }
 
-
 function updateMinMax(_min,_max){
     console.log('accelearation data '+_min);
     var minimum = Math.min(parseFloat(application.minimum_acceleration.textContent),_min);
     var maximum = Math.max(parseFloat(application.maximum_acceleration.textContent),_max);
-    application.maximum_acceleration.innerHTML = maximum;
-    application.minimum_acceleration.innerHTML = minimum;
+    if(!isNaN(maximum) && !isNaN(minimum)){
+        application.maximum_acceleration.innerHTML = maximum;
+        application.minimum_acceleration.innerHTML = minimum;
+    }
 }
 
 
@@ -67,10 +92,12 @@ function do_fun_with_physics(a) {
     } else {
         var acc = Math.sqrt(Math.pow(roundNumber(absx),2)+Math.pow(roundNumber(absy),2));
         if(acc > application.death_threashold ){
-intel.xdk.notification.alert('You are dead','confirm','Nope!');     
-        }
-        updateMinMax(acc,acc);
+            intel.xdk.notification.confirm("Are you dead ?", 'acc_confirmation', "Accident Confirmation", "Yes", "No");
         
+        }
+        if(!isNaN(acc)){
+            updateMinMax(acc,acc);
+        }
     }
     
 }
@@ -79,7 +106,6 @@ intel.xdk.notification.alert('You are dead','confirm','Nope!');
 function suc(a) {
     do_fun_with_physics(a);
 }
-
 
 
 var watchAccel = function() {

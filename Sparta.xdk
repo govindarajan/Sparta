@@ -6,7 +6,7 @@
       "projectTypeName": "com.intel.xdk.projecttype.jsapp",
       "src": "https://edge-intel.s3.amazonaws.com/jsapp/production/release-2014-ww45/sample-rollingcan/sample.zip",
       "projectGuid": "8d1c5064-f72e-48ae-8746-95295e43425c",
-      "lastModifiedDate": 1416039664497,
+      "lastModifiedDate": 1416055028962,
       "creationDate": 1416030607609
     },
     "sourceDirectory": "www",
@@ -65,6 +65,25 @@
       },
       {
         "id": "intel.xdk.base",
+        "selectedState": "Included",
+        "data": {},
+        "paramvals": {}
+      },
+      {
+        "id": "org.apache.cordova.device-motion",
+        "version": "0.2.7",
+        "selectedState": "Included",
+        "data": {},
+        "paramvals": {}
+      },
+      {
+        "id": "intel.xdk.notification",
+        "selectedState": "Included",
+        "data": {},
+        "paramvals": {}
+      },
+      {
+        "id": "intel.xdk.geolocation",
         "selectedState": "Included",
         "data": {},
         "paramvals": {}
@@ -167,7 +186,9 @@
         "runtime_": "Cordova 3.x",
         "name_": "Windows8",
         "preferences_": {
-          "Orientation": "portrait"
+          "Orientation": "portrait",
+          "windows-publisher-id": "",
+          "windows-publisher-display-name": "sarath"
         },
         "isActive_": true,
         "appName_": "Sparta",
@@ -181,7 +202,8 @@
         "cordovaCLIVersion_": "3.5",
         "crosswalkVersion_": "stable",
         "appVersion_": "0.0.0.1",
-        "appDescription_": "This demonstration application will use the JavaScript bridge to read the device's current accelerometer data and act on it."
+        "appDescription_": "This demonstration application will use the JavaScript bridge to read the device's current accelerometer data and act on it.",
+        "appAuthor_": "sarath"
       },
       "WindowsPhone8": {
         "platform_": "wp8",

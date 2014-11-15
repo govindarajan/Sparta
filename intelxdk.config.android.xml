@@ -17,6 +17,9 @@
 <intelxdk:plugin intelxdk:name="Device" intelxdk:value="intel.xdk.device"/>
 <intelxdk:plugin intelxdk:name="Display" intelxdk:value="intel.xdk.display"/>
 <intelxdk:plugin intelxdk:name="Base" intelxdk:value="intel.xdk.base"/>
+<intelxdk:plugin intelxdk:name="Accelerometer" intelxdk:value="org.apache.cordova.device-motion" intelxdk:version="0.2.7"/>
+<intelxdk:plugin intelxdk:name="Notification" intelxdk:value="intel.xdk.notification"/>
+<intelxdk:plugin intelxdk:name="Geolocation" intelxdk:value="intel.xdk.geolocation"/>
 <preference name="Orientation" value="portrait"/>
 <preference name="android-minSdkVersion" value="10"/>
 <preference name="android-targetSdkVersion" value="19"/>
