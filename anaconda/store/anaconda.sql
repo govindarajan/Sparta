@@ -5,9 +5,7 @@ create table `users` (
   name varchar(128) not null,
   phone_number varchar(32) character set latin1 not null,
   token varchar(64) character set latin1 not null,
-  location varchar(64) not null,
-  data text null,
-  primary key (`id`)
+  primary key (`id`),
   unique key `uhx_phone` (`phone_number`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
@@ -27,6 +25,7 @@ create table `group_members` (
   phone varchar(32) not null,
   active int(11) not null default 1,
   primary key (`id`),
+  unique key `grp_phone` (`group_id`, `phone`),
   key `gm_gid` (`group_id`),
   constraint `fk_group_id` foreign key (`group_id`) references `groups` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
@@ -37,7 +36,7 @@ create table `user_data` (
   date_created datetime not null,
   data text null,
   primary key (`id`),
-  key `user_data_uid` (`user_id`),
+  key `user_data_uid` (`user_id`, `date_created`),
   constraint `fk_us_user_id` foreign key (`user_id`) references `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
