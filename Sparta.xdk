@@ -6,7 +6,7 @@
       "projectTypeName": "com.intel.xdk.projecttype.jsapp",
       "src": "https://edge-intel.s3.amazonaws.com/jsapp/production/release-2014-ww45/sample-rollingcan/sample.zip",
       "projectGuid": "8d1c5064-f72e-48ae-8746-95295e43425c",
-      "lastModifiedDate": 1416130567653,
+      "lastModifiedDate": 1416140412764,
       "creationDate": 1416030607609
     },
     "sourceDirectory": "www",
@@ -92,6 +92,13 @@
       {
         "id": "org.apache.cordova.geolocation",
         "version": "0.3.7",
+        "selectedState": "Included",
+        "data": {},
+        "paramvals": {}
+      },
+      {
+        "id": "org.apache.cordova.vibration",
+        "version": "0.3.8",
         "selectedState": "Included",
         "data": {},
         "paramvals": {}

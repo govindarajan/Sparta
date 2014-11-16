@@ -36,12 +36,16 @@
          <script type="text/javascript" charset="utf-8" src="appframework/appframework.ui.min.js"></script>
          <script type="text/javascript" charset="utf-8" src="appframework/plugins/af.slidemenu.js"></script>
          -->    
-      <script src="js/jquery.js"></script>
+      <script src="http://maps.google.com/maps/api/js?sensor=false"></script>   
       <script src='intelxdk.js'></script>
       <script src='cordova.js'></script> 
       <script src='xhr.js'></script>
+
+      <script src="js/jquery.js"></script>
       <script src='js/shake.js'></script>   
-      <script src="js/main.js"></script>  
+      <script src="js/main.js"></script> 
+     <!-- <script src="js/map.js"></script> -->
+       
       <link rel="stylesheet" type="text/css" href="css/application.css">
       <link rel="stylesheet" type="text/css" href="css/login_page.css">
    </head>
@@ -56,15 +60,18 @@
             <form id = 'registration_form' action='' class='login cf'>
                <p class='large'>Register</p>
                <input id='name' type='text' placeholder='name' autofocus />
-               <input id='number' type='text' placeholder='phone number' pattern="[0-9+- ]"/>
+               <input id='number' type='text' placeholder='phone number' pattern="\d+"/>
                <input type='button' class='flo-r' id='submit' value='Checkin'  
-               onclick="handleLogin()"/>
+               onclick="handleLogin();"/>
             </form>
          </div>
       </div>
        
       <!-- MAINPAGE -->
       <div id = 'main_pages_container'>
+          <img src="images/Bart_Simpson.png" />
+        <div id="map_canvas" style="width:100%; text-align:center;"><h1>Shake  to hangout  </h1></div>
+        <!--  
          <h2>Accelerometer data</h2>
          <textarea id='accdata'></textarea>
          <p>
@@ -76,6 +83,7 @@
             <ul>MAX:<span id='max_acc'>0</span></ul>
          </li>
          </p>
+-->
       </div>
    </body>
 </html>

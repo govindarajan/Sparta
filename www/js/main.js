@@ -1,18 +1,25 @@
 /**
  *REGISTRATION PART AND THE STUFFS RELATED TO THAT
  */
+
 application = {
+    'id':'null',
     'token': 'null',
     'location': '0,0',
     'acc_threshold': 0.1,
     'death_threashold': 25000,
     'bodyLoaded':false,
     'deviceLoaded':false,
-    'login_url': ' http://54.254.107.59:45632/register'
+    
+    'login_url': 'http://54.254.107.59:45632/register',
+    'shake_url': 'http://54.254.107.59:45632/alert',
+    'location_url':'http://54.254.107.59:45632/location',
+    
 };
 
 document.addEventListener("deviceready", onDeviceReady, false);
 document.addEventListener('intel.xdk.notification.confirm', receiveConfirm, false);
+
 
 function onDeviceReady() {
     console.log('The device is ready ');
@@ -42,8 +49,6 @@ function shaked() {
 }
 
 
-
-
 //Process the event for the confirmed message
 function receiveConfirm(e) {
     if (e.id == 'acc_confirmation') {
@@ -55,10 +60,11 @@ function receiveConfirm(e) {
     }
     if (e.id == 'shake_Confirmation') {
         if (e.success == true && e.answer == true) {
-
+              console.log('Shake Confirmed');
         }
     }
 }
+
 
 function cancelAccidentSending() {
     application.send_accident = false;
@@ -66,15 +72,25 @@ function cancelAccidentSending() {
 
 function sendAccidentData() {
     application.send_accident = true;
-    var data = gatherData();
-
     //before real post check for send_accident value
-}
-
-function gatherData() {
-    var coordinates = application.location;
-    var token = application.token;
-    return true;
+     $.ajax({
+            url: application.shake_url,
+            type: "POST",
+            data: JSON.stringify(postData),
+            headers : {
+                'Authorization' : "Basic " + btoa(application.id + ":" + application.token)
+        },
+            dataType: 'json',
+            cache: false,
+            contentType: "application/json",
+            success: function(response) {
+                console.log("You will get company my dear!");
+              },
+            error: function() {
+                 intel.xdk.notification.alert("You are unlucky ,Sorry ","FAILED!",'oh!');
+            }
+        });
+ 
 }
 
 
@@ -95,10 +111,6 @@ function updateMinMax(_min, _max) {
 
 
 function do_fun_with_physics(a) {
-
-    //take the abs tilt values so we don't
-    //get stupid results while doing interim
-    //calculations
     var absx = Math.abs(a.x);
     var absy = Math.abs(a.y);
 
@@ -117,7 +129,7 @@ function do_fun_with_physics(a) {
     } else {
         var acc = Math.sqrt(Math.pow(roundNumber(absx), 2) + Math.pow(roundNumber(absy), 2));
         if (acc > application.death_threashold) {
-            intel.xdk.notification.confirm("Are you dead ?", 'acc_confirmation', "Accident Confirmation", "Yes", "No");
+            intel.xdk.notification.confirm("Are you hungry ?", 'acc_confirmation', " Confirm", "Yes", "No");
 
         }
         if (!isNaN(acc)) {
@@ -135,7 +147,7 @@ function suc(a) {
 
 var watchAccel = function() {
     var opt = {
-        'frequency': 5,
+        'frequency': 100,
     };
     var timer = intel.xdk.accelerometer.watchAcceleration(suc, opt);
 };
@@ -148,6 +160,7 @@ function onBodyLoad() {
     application.acceleraton_text = document.getElementById('accdata');
     application.minimum_acceleration = document.getElementById('min_acc');
     application.maximum_acceleration = document.getElementById('max_acc');
+    document.getElementById('submit').disabled = false;
     application.pages = {};
     application.pages.registration_page = document.getElementById('registrationPage');
     application.pages.registration_form = document.getElementById('registration_form');
@@ -156,13 +169,13 @@ function onBodyLoad() {
     if(application.device_loaded){
         checkLogin();
         watchAccel();
-        shake.startWatch('shaked');
+       // shake.startWatch('shaked');
     }
 }
 
 
 function checkLogin() {
-    
+    window.localStorage.setItem('token','null');
     application.token = window.localStorage.getItem('token');
     if (!application.token ||application.token === null || application.token == 'null') {
         update_ui('not_registered');
@@ -179,11 +192,11 @@ function update_ui(status) {
     if (status == 'registered') {
         application.pages.main_pages_container.style.display = 'block';
         application.pages.registration_page.style.display = 'none';
+        navigator.geolocation.getCurrentPosition(onGeoSuccess, onGeoError);
     } else {
         application.pages.main_pages_container.style.display = 'none';
         application.pages.registration_page.style.display = 'block';
     }
-
 }
 
 function handleLogin() {
@@ -198,6 +211,7 @@ function handleLogin() {
     };
 
     console.log('The data to be posted ' + JSON.stringify(postData));
+    
     if (uname != '' && number != '') {
         console.log('doing the ajax with ' + JSON.stringify(postData));
         $.ajax({
@@ -209,8 +223,12 @@ function handleLogin() {
             contentType: "application/json",
             success: function(response) {
                 console.log(JSON.stringify(response));
-                window.localStorage.setItem('token', response['token']);
-                application.token = response['token']
+                window.localStorage.setItem('token', response['data']['token']);
+                window.localStorage.setItem('id',response['data']['id']);
+                application.token = response['data']['token'];
+                application.id = response['data']['id'];
+                
+                
                 update_ui('registered');
             },
             error: function() {
@@ -225,14 +243,10 @@ function handleLogin() {
 }
 
 
-
-
 /**
  *THE GEOLOCATION STUFFS ARE HERE
  *
  */
-
-
 var onGeoSuccess = function(position) {
     console.log('Latitude: ' + position.coords.latitude + '\n' +
         'Longitude: ' + position.coords.longitude + '\n' +
@@ -243,7 +257,37 @@ var onGeoSuccess = function(position) {
         'Speed: ' + position.coords.speed + '\n' +
         'Timestamp: ' + position.timestamp + '\n');
     application.location = position.coords.latitude + ',' + position.coords.longitude;
+    
+    
+    sendLocationInfo();
+        
 };
+
+
+
+function sendLocationInfo(){
+    var postData = {'location':application.location};
+    console.log('credentials   '+application.id+':'+application.token);
+    $.ajax({
+            url: application.location_url,
+            type: "POST",
+            data: JSON.stringify(postData),
+            headers : {
+                'Authorization' : "Basic " + btoa(application.id + ":" + application.token)
+        },
+            dataType: 'json',
+            cache: false,
+            contentType: "application/json",
+            success: function(response) {
+                console.log("You will get company my dear!");
+              },
+            error: function() {
+                console.log('Error');
+            }
+        });
+ 
+    
+}
 
 // onError Callback receives a PositionError object
 //

@@ -128,3 +128,8 @@ label.small:hover {
 .login label.small {
   padding-left: 0.5em;
 }
+
+
+#map_canvas{
+background-image:'images/Bart_Simpson.png' !important;
+}
