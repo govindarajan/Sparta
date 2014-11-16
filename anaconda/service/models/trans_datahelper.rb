@@ -6,41 +6,19 @@ class TransDbHelper < AnacondaDbHelper
   @@trans= TransDbModel.dataset()
 
   def self.create_update(params)
-    insert_params = Hash.new
-    {
-      :user_id => :mandatory,
-      :flow_id => :mandatory,
-    }.each do |param, value|
-      throw "Missing Parameter [#{param}] for creating event" if
-        (value == :mandatory && !params.key?(param))
-      insert_params[param] = params[param] if params.key?(param)
-    end
-    normalize insert_params
-    
-    lam = lambda { @@users.on_duplicate_key_update.insert(insert_params) }
+    lam = lambda { @@trans.on_duplicate_key_update.insert(params) }
     invoke(lam)
-    get(params[:id])
   end
 
   def self.get(id)
     predicate = { :id => id }
-    users = UserModel
+    users = TransDbModel 
       .where(predicate)
-      .all
-
+      .first
     return nil if users.nil? || users.first.nil?
-    user = users.first.values
-    denormalize user
-    user
+    users
   end
 
   private
 
-  def self.normalize(insert_params)
-    insert_params
-  end
-
-  def self.denormalize(user)
-    user
-  end
 end

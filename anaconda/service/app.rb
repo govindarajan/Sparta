@@ -7,6 +7,7 @@ require File.dirname(__FILE__) + '/controllers/groups.rb'
 require File.dirname(__FILE__) + '/models/user_dbhelper.rb'
 require File.dirname(__FILE__) + '/models/group_member_dbhelper.rb'
 require File.dirname(__FILE__) + '/helpers/call_helper.rb'
+require File.dirname(__FILE__) + '/models/trans_datahelper.rb'
 
 class AnacondaService < Sinatra::Base
 
@@ -74,18 +75,21 @@ class AnacondaService < Sinatra::Base
         if user.nil?
            return {:error => true, :message => "The user does not exist"}.to_json
         end
-        group = GroupDbHelper.get_by_userid(params[:id])
-        unless group.nil?
-            #Initiate call to all the members in that group.
-            numbers = []
-            members = GroupMemberDbHelper.get_active_members(group.first.id)
-    members.each do |member| 	
-    numbers << member[:phone] 
-    end
-    call_helper = CallHelper.new
-    call_helper.callMembers(numbers, 31645)
+        #group = GroupDbHelper.get_by_userid(params[:id])
+        #unless group.nil?
+         #   #Initiate call to all the members in that group.
+          #  numbers = []
+         #   members = GroupMemberDbHelper.get_active_members(group.first.id)
+    #members.each do |member| 	
+    #numbers << member[:phone] 
+    #end
+    #call_helper = CallHelper.new
+    #call_helper.callMembers(numbers, 31645)
+    #Create a new transaction with this user.
+    params1 = {:flow_id => 31645, :user_id => params[:id]}
+    id = TransDbHelper.create_update(params1)
+    return {:message =>"inserted", :trans_id => id}.to_json
  end
 
-end
 
 end
