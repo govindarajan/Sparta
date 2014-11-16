@@ -29,33 +29,40 @@
    <head>
       <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
       <title>Accelerometer</title>
-      <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0;" />
+      <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0" />
       <!--
          <link rel="stylesheet" type="text/css" href="appframework/af.ui.css" />
          <link rel="stylesheet" type="text/css" href="appframework/icons.css" />
          <script type="text/javascript" charset="utf-8" src="appframework/appframework.ui.min.js"></script>
          <script type="text/javascript" charset="utf-8" src="appframework/plugins/af.slidemenu.js"></script>
          -->    
+      <script src="js/jquery.js"></script>
       <script src='intelxdk.js'></script>
       <script src='cordova.js'></script> 
       <script src='xhr.js'></script>
-      <script type="text/javascript" src="js/main.js"></script>  
+      <script src='js/shake.js'></script>   
+      <script src="js/main.js"></script>  
       <link rel="stylesheet" type="text/css" href="css/application.css">
       <link rel="stylesheet" type="text/css" href="css/login_page.css">
    </head>
+    <!-- use this for twitter bird
+      http://s.cdpn.io/15065/twitter-bird-dark-bgs.png
+    -->
    <body onload="onBodyLoad()" background="images/accident.png">
       <!-- REGISTRATION PAGE -->
       <div id ='registrationPage' style='display:none;'>
          <div class='screen'>
-            <img class='logo' src='http://s.cdpn.io/15065/twitter-bird-dark-bgs.png' />
-            <form action='' class='login cf'>
+            <img class='logo' src='images/ic_launcher.png' />
+            <form id = 'registration_form' action='' class='login cf'>
                <p class='large'>Register</p>
-               <input type='text' placeholder='name' autofocus />
-               <input type='text' placeholder='phone number' pattern="[0-9+- ]"/>
-               <input class='flo-r' type='submit' value='Sign In' />
+               <input id='name' type='text' placeholder='name' autofocus />
+               <input id='number' type='text' placeholder='phone number' pattern="[0-9+- ]"/>
+               <input type='button' class='flo-r' id='submit' value='Checkin'  
+               onclick="handleLogin()"/>
             </form>
          </div>
       </div>
+       
       <!-- MAINPAGE -->
       <div id = 'main_pages_container'>
          <h2>Accelerometer data</h2>
