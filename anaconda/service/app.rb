@@ -88,6 +88,7 @@ class AnacondaService < Sinatra::Base
     #Create a new transaction with this user.
     params1 = {:flow_id => 31645, :user_id => params[:id], :date_created => Time.now}
     id = TransDbHelper.create_update(params1)
+    #TODO send sms, get memebers within 10 kms , to all of them, create sms content with this tran id and send sms.
     return {:message =>"inserted", :trans_id => id}.to_json
  end
   
