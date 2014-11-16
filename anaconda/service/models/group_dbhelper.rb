@@ -17,7 +17,7 @@ class GroupDbHelper < AnacondaDbHelper
     invoke(lam)
   end
 
-  def serf.get(id)
+  def self.get(id)
     predicate = { :id => id }
     groups = GroupModel
       .where(predicate)
@@ -28,7 +28,7 @@ class GroupDbHelper < AnacondaDbHelper
     group
   end
 
-  def serf.get_by_userid(user_id, type = nil)
+  def self.get_by_userid(user_id, type = nil)
     predicate = { :user_id => user_id }
     predicate[:type] = type unless type.nil?
     groups = GroupModel

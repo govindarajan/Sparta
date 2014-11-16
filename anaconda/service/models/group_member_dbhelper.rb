@@ -16,7 +16,7 @@ class GroupMemberDbHelper < AnacondaDbHelper
     invoke(lam)
   end
 
-  def serf.get_active_members(gid)
+  def self.get_active_members(gid)
     predicate = { :group_id => gid, :active => 1 }
     mems = GroupMemberModel
       .where(predicate)
