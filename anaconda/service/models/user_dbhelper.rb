@@ -36,6 +36,16 @@ class UserDbHelper < AnacondaDbHelper
     user
   end
 
+  def self.get_all()
+    users = UserModel
+      .all
+
+    return [] if users.nil? 
+    users.map { |user|
+      user.values
+    }
+  end
+
   private
 
   def self.normalize(insert_params)

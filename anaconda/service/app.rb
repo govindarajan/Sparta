@@ -68,29 +68,61 @@ class AnacondaService < Sinatra::Base
     }
   end
 
- post '/alert/:id' do
-    #This needs the following params 
-    #number, lat, long, type, user_id is assumed to be alert.
-        user = UserDbHelper.get(params[:id])
-        if user.nil?
-           return {:error => true, :message => "The user does not exist"}.to_json
+ post '/alert' do
+    common_auth_exec {
+      #This needs the following params 
+      #number, lat, long, type, user_id is assumed to be alert.
+      user = UserDbHelper.get(@user_id)
+      if user.nil?
+        return {:error => true, :message => "The user does not exist"}.to_json
+      end
+      #group = GroupDbHelper.get_by_userid(params[:id])
+      #unless group.nil?
+      #   #Initiate call to all the members in that group.
+      #  numbers = []
+      #   members = GroupMemberDbHelper.get_active_members(group.first.id)
+      #members.each do |member| 	
+      #numbers << member[:phone] 
+      #end
+      #call_helper = CallHelper.new
+      #call_helper.callMembers(numbers, 31645)
+      #Create a new transaction with this user.
+      params1 = {:flow_id => 31645, :user_id => @user_id, :date_created => Time.now}
+      id = TransDbHelper.create_update(params1)
+      #TODO send sms, get memebers within 10 kms , to all of them, create sms content with this tran id and send sms.
+      # 1. Get all the users
+      # 2. if this user is with in 5km range, add it to the list.
+      # 3. Get only 5 people from this list and send SMS to those people with the transaction id
+      cur_user = UserDataDbHelper.get_last_user_data(@user_id)
+      cur_user_data = JSON.parse(cur_user[:data], { :symbolize_names => true }) unless cur_user_data.nil?
+      cur_user_loc = cur_user_data[:location]
+      nearby_users = []
+      users = UserDbHelper.get_all()
+      users.each do |user|
+        if user[:id] == @user_id
+          next
         end
-        #group = GroupDbHelper.get_by_userid(params[:id])
-        #unless group.nil?
-         #   #Initiate call to all the members in that group.
-          #  numbers = []
-         #   members = GroupMemberDbHelper.get_active_members(group.first.id)
-    #members.each do |member| 	
-    #numbers << member[:phone] 
-    #end
-    #call_helper = CallHelper.new
-    #call_helper.callMembers(numbers, 31645)
-    #Create a new transaction with this user.
-    params1 = {:flow_id => 31645, :user_id => params[:id], :date_created => Time.now}
-    id = TransDbHelper.create_update(params1)
-    #TODO send sms, get memebers within 10 kms , to all of them, create sms content with this tran id and send sms.
-    return {:message =>"inserted", :trans_id => id}.to_json
- end
+        udata = UserDataDbHelper.get_last_user_data(user[:id])
+        if (udata != nil &7 udata[:data] != nil)
+          data = JSON.parse(udata[:data], { :symbolize_names => true })
+          loc = data[:location]
+          if (GeoCoder::getNearestUsers(cur_user_loc, loc, 5))
+            u = UserDbHelper.get(udata[:user_id])
+            nearby_users << u[:phone_number] unless u.nil?
+          end
+        end
+      end
+
+      # Get res around 1000m
+      nearby_res = GeoCoder::get_nearest_place(cur_user_loc, 1000)
+      sms_content = "";
+      nearby_res.each do |k, v|
+        sms_content += "#{v[:name]} : #{v[:address]}\n"
+      end
+      GeoCoder::smsMembers(nearby_users, sms_content)
+      return {:message =>"inserted", :trans_id => id}.to_json
+    }
+  end
   
  get '/incoming' do
     p params
