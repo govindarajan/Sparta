@@ -27,7 +27,7 @@ class CallHelper
 	end
 
 	def sendSms(number, content)
-		vn = "09222183143"
+		vn = "08033545128"
 		response = Exotel::Sms.send(:from => vn, :to => number, :body => content)
 		response.sid #sid is used to find the details of the call. Ex: Total price of teh call. 
 	end

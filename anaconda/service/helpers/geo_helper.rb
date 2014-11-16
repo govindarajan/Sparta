@@ -11,7 +11,11 @@ class GeoCoder
     result["results"][0]["formatted_address"]
   end
 
-  def self.getNearestUsers(lat1, long1, lat2, long2, distance)
+  def self.getNearestUsers(latlong1, latlong2, distance)
+    lat1 = latlong1.split(',')[0]
+    long1 = latlong1.split(',')[1]
+    lat2 = latlong2.split(',')[0]
+    long2 = latlong2.split(',')[1]
     if (Math.acos(Math.sin(lat1.to_f) * Math.sin(lat2.to_f) + Math.cos(lat1.to_f) * Math.cos(lat2.to_f) * Math.cos(long2.to_f - (long1.to_f))) * 6371 <= distance.to_f)
       return true;
     end

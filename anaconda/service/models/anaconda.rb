@@ -3,8 +3,8 @@ require 'mysql'
 
 Sequel.datetime_class = DateTime
 
-db_user = "root"
-db_password = ""
+db_user = "haha"
+db_password = "fromHackaDon"
 db_host = "127.0.0.1"
 db_port =  3306
 db_name = "anaconda"
