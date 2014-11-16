@@ -15,9 +15,9 @@ class MappingDbHelper < AnacondaDbHelper
     predicate = { :sid => id }
     users = MappingModel 
       .where(predicate)
-      .first
+      .all
     return nil if users.nil? || users.first.nil?
-    users
+    users.first.values
   end
 
   private
