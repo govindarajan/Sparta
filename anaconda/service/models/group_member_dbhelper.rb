@@ -12,8 +12,24 @@ class GroupMemberDbHelper < AnacondaDbHelper
     insert_params[:group_id] = g_id
     insert_params[:phone] = phone
     
-    lam = lambda { @@g_mems.insert(insert_params) }
+    lam = lambda { @@g_mems.insert_ignore.multi_insert([insert_params]) }
     invoke(lam)
+    get_by_phone(phone)
+  end
+
+  def self.delete(id)
+    GroupMemberModel.where({:id => id}).delete
+  end
+
+  def self.get_by_phone(phone)
+    predicate = { :phone => phone }
+    mems = GroupMemberModel
+      .where(predicate)
+      .limit(1)
+      .all
+
+    return nil if mems.nil? || mems.first.values.nil?
+    mems.first.values
   end
 
   def self.get_active_members(gid)
@@ -22,8 +38,10 @@ class GroupMemberDbHelper < AnacondaDbHelper
       .where(predicate)
       .all
 
-    return nil if mems.nil?
-    mems
+    return [] if mems.nil?
+    mems.map { |mem|
+      mem.values
+    }
   end
 
 end

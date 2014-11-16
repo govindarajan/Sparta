@@ -11,10 +11,34 @@ class CallHelper
 		end
 	end
 
-	def initiateCall(number)
-		vn = "02230770124"
-		response = Exotel::Call.connect_to_flow(:to => number, :from => vn, :caller_id => vn, :call_type => 'trans', :flow_id => '31645')
-		call_id = response.sid #sid is used to find the details of the call. Ex: Total price of teh call. 
+	def initiateCall(number, flow_id)
+		vn = "09222183143"
+		response = Exotel::Call.connect_to_flow(:to => number, :from => vn, :caller_id => vn, :call_type => 'trans', :flow_id => flow_id)
+		response.sid #sid is used to find the details of the call. Ex: Total price of teh call. 
+	end
+	
+	def callMembers(numbers, flow_id)
+		sids = []
+		numbers.each do |number|
+			sid = initiateCall(number, flow_id)
+			sids << sid unless sid.nil?
+		end
+		sids
+	end
+
+	def sendSms(number, content)
+		vn = "09222183143"
+		response = Exotel::Sms.send(:from => vn, :to => number, :body => content)
+		response.sid #sid is used to find the details of the call. Ex: Total price of teh call. 
+	end
+
+	def smsMembers(numbers, content)
+		sids = []
+		numbers.each do |number|
+			sid = sendSms(number, content)
+			sids << sid unless sid.nil?
+		end
+		sids
 	end
 end
 

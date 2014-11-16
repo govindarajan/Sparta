@@ -15,6 +15,7 @@ class GroupDbHelper < AnacondaDbHelper
     
     lam = lambda { @@groups.insert(insert_params) }
     invoke(lam)
+    get_by_name(insert_params[:name], insert_params[:user_id])
   end
 
   def self.get(id)
@@ -26,6 +27,31 @@ class GroupDbHelper < AnacondaDbHelper
     return nil if groups.nil? || groups.first.nil?
     group = groups.first.values
     group
+  end
+
+  def self.get_by_name(name, uid)
+    predicate = { :name => name, :user_id => uid }
+    groups = GroupModel
+      .where(predicate)
+      .limit(1)
+      .all
+
+    return nil if groups.nil? || groups.first.nil?
+    group = groups.first.values
+    group
+
+  end
+
+  def self.get_by_uid(uid)
+    predicate = { :user_id => uid }
+    groups = GroupModel
+      .where(predicate)
+      .all
+
+    return [] if groups.nil?
+    groups.map { |group|
+      group.values
+    }
   end
 
   def self.get_by_userid(user_id, type = nil)

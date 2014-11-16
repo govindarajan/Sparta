@@ -14,6 +14,8 @@ class GeoCoder
 		end
 		return false;
 	end
+
+
 end
 
 ##GeoCoder::getAddress("40.714224", "-73.961452")
