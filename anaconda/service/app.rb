@@ -86,9 +86,23 @@ class AnacondaService < Sinatra::Base
     #call_helper = CallHelper.new
     #call_helper.callMembers(numbers, 31645)
     #Create a new transaction with this user.
-    params1 = {:flow_id => 31645, :user_id => params[:id]}
+    params1 = {:flow_id => 31645, :user_id => params[:id], :date_created => Time.now}
     id = TransDbHelper.create_update(params1)
     return {:message =>"inserted", :trans_id => id}.to_json
+ end
+  
+ get '/incoming' do
+    p params
+    trans_id = params[:digits] 
+    from = params[:From]
+    #trans = TransDbHelper.get(trans_id)
+    numbers = [] #TODO fetch it from DB
+    numbers << from
+    json = {:numbers => numbers}.to_json
+    params = {:data => json, :id=> trans_id}
+    id = TransDbHelper.create_update(params) 
+    p id
+    return {:message =>"inserted", :trans_id => trans_id}.to_json
  end
 
 
