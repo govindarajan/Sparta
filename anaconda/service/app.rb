@@ -8,6 +8,7 @@ require File.dirname(__FILE__) + '/models/user_dbhelper.rb'
 require File.dirname(__FILE__) + '/models/group_member_dbhelper.rb'
 require File.dirname(__FILE__) + '/helpers/call_helper.rb'
 require File.dirname(__FILE__) + '/models/trans_datahelper.rb'
+require File.dirname(__FILE__) + '/models/mapping_dbhelper.rb'
 
 class AnacondaService < Sinatra::Base
 
@@ -86,24 +87,27 @@ class AnacondaService < Sinatra::Base
     #call_helper = CallHelper.new
     #call_helper.callMembers(numbers, 31645)
     #Create a new transaction with this user.
-    params1 = {:flow_id => 31645, :user_id => params[:id], :date_created => Time.now}
+    params1 = {:flow_id => 31645, :user_id => params[:id], :date_created => Time.now.strftime("%Y-%m-%d %H:%M:%S")}
     id = TransDbHelper.create_update(params1)
     #TODO send sms, get memebers within 10 kms , to all of them, create sms content with this tran id and send sms.
     return {:message =>"inserted", :trans_id => id}.to_json
  end
   
  get '/incoming' do
-    p params
     trans_id = params[:digits] 
     from = params[:From]
-    #trans = TransDbHelper.get(trans_id)
-    numbers = [] #TODO fetch it from DB
-    numbers << from
-    json = {:numbers => numbers}.to_json
-    params = {:data => json, :id=> trans_id}
-    id = TransDbHelper.create_update(params) 
-    p id
+    trans = TransDbHelper.get(trans_id)
+    return {:error => true, :message => "No tran for this"}.to_json if trans.nil?
+    user = UserDbHelper.get(trans[:user_id])
+    mapping_params = {:sid => params[:CallSid], :from => params[:From], :to => user[:phone_number]}
+    MappingDbHelper.create_update(mapping_params)
     return {:message =>"inserted", :trans_id => trans_id}.to_json
+ end
+
+ get '/connectnumber' do
+    mapping = MappingDbHelper.get(params[:CallSid])
+    return "" if mapping.nil?
+    return mapping[:to]
  end
 
 

@@ -14,9 +14,10 @@ class TransDbHelper < AnacondaDbHelper
     predicate = { :id => id }
     users = TransDbModel 
       .where(predicate)
-      .first
+      .all
     return nil if users.nil? || users.first.nil?
-    users
+    p "************************"
+    p users.first.values
   end
 
   private

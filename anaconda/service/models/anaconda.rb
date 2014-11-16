@@ -17,6 +17,12 @@ class UserModel < Sequel::Model(db[:users])
   @use_transactions = false
 end
 
+class MappingModel < Sequel::Model(db[:mapping])
+  unrestrict_primary_key
+  set_primary_key [:sid]
+  @use_transactions = false
+end
+
 class TransDbModel < Sequel::Model(db[:trans_data])
   unrestrict_primary_key
   set_primary_key [:id]
