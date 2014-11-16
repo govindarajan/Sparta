@@ -106,14 +106,17 @@ label.small:hover {
 .login input[type='password'] {
   margin-bottom: 0.7em;
 }
-.login input[type='submit'] {
+#submit {
+  border-radius: 10px !important; 
   margin-top: 0.7em;
+  width: 100%;
   background: #00A0D1;
   background: linear-gradient(#00aade, #0096c4);
   border-radius: 3px;
   border: 0;
   height: 2em;
   color: #fff;
+  text-align: center;
   font-family: Georgia, serif;
   font-size: 1.3em;
   font-weight: 700;

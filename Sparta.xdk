@@ -6,7 +6,7 @@
       "projectTypeName": "com.intel.xdk.projecttype.jsapp",
       "src": "https://edge-intel.s3.amazonaws.com/jsapp/production/release-2014-ww45/sample-rollingcan/sample.zip",
       "projectGuid": "8d1c5064-f72e-48ae-8746-95295e43425c",
-      "lastModifiedDate": 1416055028962,
+      "lastModifiedDate": 1416130567653,
       "creationDate": 1416030607609
     },
     "sourceDirectory": "www",
@@ -32,20 +32,6 @@
     ],
     "cordovaPlugins": [
       {
-        "id": "org.apache.cordova.device",
-        "version": "0.2.9",
-        "selectedState": "Included",
-        "data": {},
-        "paramvals": {}
-      },
-      {
-        "id": "org.apache.cordova.splashscreen",
-        "version": "0.3.0",
-        "selectedState": "Included",
-        "data": {},
-        "paramvals": {}
-      },
-      {
         "id": "intel.xdk.accelerometer",
         "selectedState": "Included",
         "data": {},
@@ -70,6 +56,33 @@
         "paramvals": {}
       },
       {
+        "id": "intel.xdk.notification",
+        "selectedState": "Included",
+        "data": {},
+        "paramvals": {}
+      },
+      {
+        "id": "org.apache.cordova.splashscreen",
+        "version": "0.3.0",
+        "selectedState": "Included",
+        "data": {},
+        "paramvals": {}
+      },
+      {
+        "id": "org.apache.cordova.dialogs",
+        "version": "0.2.6",
+        "selectedState": "Included",
+        "data": {},
+        "paramvals": {}
+      },
+      {
+        "id": "org.apache.cordova.device",
+        "version": "0.2.9",
+        "selectedState": "Included",
+        "data": {},
+        "paramvals": {}
+      },
+      {
         "id": "org.apache.cordova.device-motion",
         "version": "0.2.7",
         "selectedState": "Included",
@@ -77,13 +90,8 @@
         "paramvals": {}
       },
       {
-        "id": "intel.xdk.notification",
-        "selectedState": "Included",
-        "data": {},
-        "paramvals": {}
-      },
-      {
-        "id": "intel.xdk.geolocation",
+        "id": "org.apache.cordova.geolocation",
+        "version": "0.3.7",
         "selectedState": "Included",
         "data": {},
         "paramvals": {}
@@ -223,6 +231,11 @@
         "crosswalkVersion_": "stable",
         "appVersion_": "1.0.0.0"
       }
+    }
+  },
+  "emulator": {
+    "OTAU": {
+      "message": null
     }
   }
 }
