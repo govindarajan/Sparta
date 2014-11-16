@@ -1,11 +1,46 @@
-var application = {
+/**
+*REGISTRATION PART AND THE STUFFS RELATED TO THAT
+*/
+
+application = {
     'token':'spartatoken',
     'acc_threshold':0.1,
     'death_threashold':25000    
 };
 
-document.addEventListener("intel.xdk.device.ready", onDeviceReady, false);
+document.addEventListener("deviceready", onDeviceReady, false) ;
 document.addEventListener('intel.xdk.notification.confirm', receiveConfirm, false);
+
+function onDeviceReady() {
+     console.log('The device is ready ');
+      if( window.Cordova && navigator.splashscreen ) {     // Cordova API detected
+               navigator.splashscreen.hide() ;                 // hide splash screen
+            }
+    //lock orientation he is not gonna play wth it and we could improve the battery usage
+    intel.xdk.device.setRotateOrientation("portrait");
+    intel.xdk.device.setAutoRotate(false);
+
+    //manage power again comes the power saving , green exotel :]
+    intel.xdk.device.managePower(true, false);
+    if(logged_in)
+    {
+        watchAccel();
+    }
+}
+
+
+function checkLogin()
+{
+    if(id = localStorage.getItem('id')){
+        application.pages.main_pages_container.style.display = 'none';
+        application.pages.registration_page.style.display = 'block';
+    } else {
+        localStorage.setItem('id','100');
+        application.pages.main_pages_container.style.display = 'block';
+        application.pages.registration_page.style.display = 'none';
+    }
+    return false;
+}
 
 
 //Process the event for the confirmed message
@@ -20,7 +55,7 @@ function receiveConfirm(e)
                 }
         } 
 
-function sendCallRequest(){
+function sendAccidentData(){
     var data = gatherData();
 } 
             
@@ -28,25 +63,6 @@ function gatherData(){
    var coordinates = intel.xdk.geolocation.getCurrentPosition();
    var token = application.token;
    return true;
-}
-
-
-
-
-
-function onDeviceReady() {
-     console.log('The device is ready ');
-    //lock orientation he is not gonna play wth it and we could improve the battery usage
-    intel.xdk.device.setRotateOrientation("portrait");
-    intel.xdk.device.setAutoRotate(false);
-
-    //manage power again comes the power saving , green exotel :]
-    intel.xdk.device.managePower(true, false);
-
-    //hide splash screen
-    intel.xdk.device.hideSplashScreen();
-
-    watchAccel();
 }
 
 
@@ -123,4 +139,11 @@ function onBodyLoad() {
     application.acceleraton_text = document.getElementById('accdata');
     application.minimum_acceleration = document.getElementById('min_acc');
     application.maximum_acceleration = document.getElementById('max_acc');
+    application.pages = {};
+    application.pages.registration_page = document.getElementById('registrationPage');
+    application.pages.main_pages_container = document.getElementById('main_pages_container');
+    
+    //now select the page to show 
+    var logged_in = checkLogin();
+    console.log('he is '+logged_in);
 }
