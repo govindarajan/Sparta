@@ -17,7 +17,7 @@ class UserModel < Sequel::Model(db[:users])
   @use_transactions = false
 end
 
-class GroupsModel < Sequel::Model(db[:groups])
+class GroupModel < Sequel::Model(db[:groups])
   unrestrict_primary_key
   set_primary_key [:id]
   @use_transactions = false
