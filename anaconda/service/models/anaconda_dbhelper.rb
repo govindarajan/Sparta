@@ -21,19 +21,19 @@ class AnacondaDbHelper
       l.call
     rescue Sequel::UniqueConstraintViolation => ucv_ex
       # Unique key error. This is a fatal error.
-      raise CerebroDbHelperError.new(true, ucv_ex.message)
+      raise AnacondaDbHelperError.new(true, ucv_ex.message)
     rescue Sequel::ConstraintViolation => cv_ex
       # Generic constraint violation. This is also a fatal error.
-      raise CerebroDbHelperError.new(true, cv_ex.message)
+      raise AnacondaDbHelperError.new(true, cv_ex.message)
     rescue Sequel::SerializationFailure => sf_ex
       # Serialization failure/deadlock in the database.
-      raise CerebroDbHelperError.new(true, sf_ex.message)
+      raise AnacondaDbHelperError.new(true, sf_ex.message)
     rescue Sequel::DatabaseDisconnectError => dde_ex
       # Raised when the connection to the database has been lost. This is non-fatal.
-      raise CerebroDbHelperError.new(false, dde_ex.message)
+      raise AnacondaDbHelperError.new(false, dde_ex.message)
     rescue Sequel::DatabaseError => de_ex
       # This is generic sequel DB error.. Lets make this as a temp failure
-      raise CerebroDbHelperError.new(false, de_ex.message)
+      raise AnacondaDbHelperError.new(false, de_ex.message)
     end
   end
   
