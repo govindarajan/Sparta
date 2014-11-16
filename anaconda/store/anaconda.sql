@@ -50,4 +50,9 @@ create table `trans_data` (
   constraint `fk_us_user_id12` foreign key (`user_id`) references `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
-
+create table `mapping` (
+  sid varchar(64) character set latin1 not null,
+`from` varchar(64) character set latin1 not null,
+`to` varchar(64) character set latin1 not null,
+  primary key (`sid`)
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;

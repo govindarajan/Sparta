@@ -11,9 +11,9 @@ class CallHelper
 		end
 	end
 
-	def initiateCall(number, flow_id)
+	def initiateCall(from, to)
 		vn = "08033545128"
-		response = Exotel::Call.connect_to_flow(:to => number, :from => vn, :caller_id => vn, :call_type => 'trans', :flow_id => flow_id)
+		response = Exotel::Call.connect_to_flow(:to => to, :from => from, :caller_id => vn, :call_type => 'trans')
 		response.sid #sid is used to find the details of the call. Ex: Total price of teh call. 
 	end
 	

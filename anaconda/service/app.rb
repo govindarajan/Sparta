@@ -8,6 +8,7 @@ require File.dirname(__FILE__) + '/models/user_dbhelper.rb'
 require File.dirname(__FILE__) + '/models/group_member_dbhelper.rb'
 require File.dirname(__FILE__) + '/helpers/call_helper.rb'
 require File.dirname(__FILE__) + '/models/trans_datahelper.rb'
+require File.dirname(__FILE__) + '/models/mapping_dbhelper.rb'
 
 class AnacondaService < Sinatra::Base
 
@@ -18,7 +19,7 @@ class AnacondaService < Sinatra::Base
   end
 
   get '/missedCall' do
-      return "hey"
+    return "hey"
   end
   
   post '/register' do
@@ -68,7 +69,7 @@ class AnacondaService < Sinatra::Base
     }
   end
 
- post '/alert' do
+  post '/alert' do
     common_auth_exec {
       #This needs the following params 
       #number, lat, long, type, user_id is assumed to be alert.
@@ -103,7 +104,7 @@ class AnacondaService < Sinatra::Base
           next
         end
         udata = UserDataDbHelper.get_last_user_data(user[:id])
-        if (udata != nil &7 udata[:data] != nil)
+        if (udata != nil && udata[:data] != nil)
           data = JSON.parse(udata[:data], { :symbolize_names => true })
           loc = data[:location]
           if (GeoCoder::getNearestUsers(cur_user_loc, loc, 5))
@@ -124,19 +125,22 @@ class AnacondaService < Sinatra::Base
     }
   end
   
- get '/incoming' do
-    p params
+  get '/incoming' do
     trans_id = params[:digits] 
     from = params[:From]
-    #trans = TransDbHelper.get(trans_id)
-    numbers = [] #TODO fetch it from DB
-    numbers << from
-    json = {:numbers => numbers}.to_json
-    params = {:data => json, :id=> trans_id}
-    id = TransDbHelper.create_update(params) 
-    p id
+    trans = TransDbHelper.get(trans_id)
+    return {:error => true, :message => "No tran for this"}.to_json if trans.nil?
+    user = UserDbHelper.get(trans[:user_id])
+    mapping_params = {:sid => params[:CallSid], :from => params[:From], :to => user[:phone_number]}
+    MappingDbHelper.create_update(mapping_params)
     return {:message =>"inserted", :trans_id => trans_id}.to_json
- end
+  end
+
+  get '/connectnumber' do
+    mapping = MappingDbHelper.get(params[:CallSid])
+    return "" if mapping.nil?
+    return mapping[:to]
+  end
 
 
 end
